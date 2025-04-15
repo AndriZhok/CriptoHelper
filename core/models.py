@@ -6,6 +6,9 @@ class Currency(models.Model):
     symbol = models.CharField(max_length=10)
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.name
+
 
 class ConversionRate(models.Model):
     currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
@@ -30,3 +33,5 @@ class ConversionHistory(models.Model):
     amount = models.FloatField()
     result = models.FloatField()
     timestamp = models.DateTimeField(auto_now_add=True)
+
+

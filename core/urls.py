@@ -1,10 +1,9 @@
 # core/urls.py
 from django.urls import path
 from . import views
+from .views import chart_view
 
 urlpatterns = [
-    path("", views.dashboard, name="dashboard"),
-    path("login/", views.login_view, name="login"),
-    path("register/", views.register_view, name="register"),
-    path("logout/", views.logout_view, name="logout"),
+    path('calculator/', views.crypto_calculator, name='calculator'),
+    path('chart/', chart_view, name='chart'),
 ]

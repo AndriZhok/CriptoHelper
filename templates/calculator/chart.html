@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="form-container">
+    <h2 style="text-align:center;">📊 Графік курсу криптовалюти</h2>
+    <form method="post">
+      {% csrf_token %}
+      <label>Оберіть криптовалюту:</label>
+      <select name="currency" class="form-control">
+        {% for currency in currencies %}
+          <option value="{{ currency.id }}" {% if selected_currency and currency.id == selected_currency.id %}selected{% endif %}>
+            {{ currency.name }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <label>Фіатна валюта:</label>
+      <select name="fiat" class="form-control">
+        {% for f in fiat_currencies %}
+          <option value="{{ f }}" {% if f == selected_fiat %}selected{% endif %}>{{ f }}</option>
+        {% endfor %}
+      </select>
+
+      <label>Період (у днях):</label>
+      <select name="days" class="form-control">
+        {% for d in periods %}
+          <option value="{{ d }}" {% if selected_days == d|stringformat:"s" %}selected{% endif %}>{{ d }} днів</option>
+        {% endfor %}
+      </select>
+
+      <button type="submit">Показати графік</button>
+    </form>
+
+    {% if chart_data %}
+      <canvas id="priceChart" width="400" height="200"></canvas>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script>
+        const ctx = document.getElementById('priceChart').getContext('2d');
+        const chartData = {{ chart_data|safe }};
+
+        const labels = chartData.map(item => {
+          const date = new Date(Number(item[0]));
+          return date.toLocaleDateString("uk-UA");
+        });
+
+        const prices = chartData.map(item => item[1]);
+
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: `Ціна за {{ selected_days }} днів (USD)`,
+              data: prices,
+              borderWidth: 2,
+              borderColor: 'rgba(255,99,132,1)',
+              fill: false,
+              tension: 0.3
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: false
+              }
+            }
+          }
+        });
+      </script>
+    {% endif %}
+  </div>
+{% endblock %}

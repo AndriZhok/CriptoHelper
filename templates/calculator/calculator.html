@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <style>
+    .form-container {
+      background-color: #1a1a1a;
+      padding: 2rem;
+      border-radius: 1rem;
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      color: #fff;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 0.5rem;
+      background-color: #333;
+      color: #fff;
+    }
+
+    button {
+      background-color: #d32f2f;
+      color: white;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      margin: 0.2rem;
+    }
+
+    .result-box {
+      margin-top: 1.5rem;
+      background-color: #222;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-size: 1.5rem;
+      text-align: center;
+      color: #00e676;
+    }
+
+    .error-msg {
+      margin-top: 1rem;
+      color: #ff5252;
+      text-align: center;
+    }
+  </style>
+
+  <div class="form-container">
+    <h2 style="text-align:center;">💱 Конвертер криптовалют</h2>
+    <form method="post" id="convert-form">
+      {% csrf_token %}
+      <label for="id_currency">Криптовалюта:</label>
+      {{ form.currency }}
+
+      <label for="id_fiat_currency">Фіатна валюта:</label>
+      {{ form.fiat_currency }}
+
+      <label for="id_amount">Сума:</label>
+      {{ form.amount }}
+
+      <input type="hidden" name="reverse" id="reverse" value="false" />
+
+      <div style="text-align: center;">
+        <button type="submit">🔁 Конвертувати</button>
+        <button type="button" onclick="toggleReverse()">🔄 Змінити напрямок</button>
+      </div>
+    </form>
+
+    {% if formatted %}
+      <div class="result-box">
+        ✅ Отримаєте приблизно: <strong>{{ formatted }}</strong>
+      </div>
+    {% endif %}
+
+    {% if error %}
+      <div class="error-msg">
+        ⚠️ {{ error }}
+      </div>
+    {% endif %}
+  </div>
+
+  <script>
+    function toggleReverse() {
+      const reverseInput = document.getElementById('reverse');
+      reverseInput.value = reverseInput.value === 'true' ? 'false' : 'true';
+      document.getElementById('convert-form').submit();
+    }
+  </script>
+{% endblock %}
