@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div class="form-container">
+    <h2>📝 Реєстрація</h2>
+    <form method="post">
+      {% csrf_token %}
+      {{ form|crispy }}
+      <button type="submit">Зареєструватися</button>
+    </form>
+    <p>Вже маєте акаунт? <a href="{% url 'login' %}">Увійдіть</a></p>
+  </div>
+{% endblock %}

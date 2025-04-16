@@ -1,12 +1,17 @@
 import json
 
 import requests
-from django.shortcuts import render
-from .forms import ConversionForm
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+
+from .forms import ConversionForm, PriceWatchForm
 from django.conf import settings
 from django.core.cache import cache
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
 
-from .models import Currency
+from .models import Currency, UserNotification, PriceWatch
 
 CURRENCY_SYMBOLS = {
     'UAH': '₴',
@@ -115,5 +120,65 @@ def chart_view(request):
         'selected_currency': selected_currency,
         'chart_data': json.dumps(chart_data),
         'selected_days': selected_days,
-        'periods': periods  # ← додано
+        'periods': periods,
     })
+
+@login_required
+def create_price_watch(request):
+    if request.method == 'POST':
+        form = PriceWatchForm(request.POST)
+        if form.is_valid():
+            watch = form.save(commit=False)
+            watch.user = request.user
+            watch.save()
+            return redirect('create_price_watch')  # або 'watch'
+
+    else:
+        form = PriceWatchForm()
+
+    currencies = Currency.objects.all()
+    notifications = UserNotification.objects.filter(user=request.user).order_by('-created_at')[:20]
+    price_watches = PriceWatch.objects.filter(user=request.user).order_by('-last_checked')
+
+    return render(request, 'calculator/notifications.html', {
+        'form': form,
+        'currencies': currencies,
+        'notifications': notifications,
+        'price_watches': price_watches,
+    })
+
+@login_required
+def delete_price_watch(request, watch_id):
+    watch = get_object_or_404(PriceWatch, id=watch_id, user=request.user)
+    watch.delete()
+    return redirect('create_price_watch')
+
+def watch_success(request):
+    return render(request, 'calculator/success.html', {'message': 'Сповіщення успішно створено ✅'})
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Реєстрація успішна! Тепер увійдіть в акаунт.')
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})
+
+def index(request):
+    return render(request, 'calculator/index.html')
+
+
+@login_required
+def api_notifications(request):
+    notifications = UserNotification.objects.filter(user=request.user).order_by('-created_at')[:10]
+    data = [
+        {
+            'created_at': n.created_at.strftime("%d.%m.%Y %H:%M"),
+            'message': n.message
+        } for n in notifications
+    ]
+    return JsonResponse({'notifications': data})

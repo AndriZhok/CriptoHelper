@@ -35,3 +35,22 @@ class ConversionHistory(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
 
+class PriceWatch(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
+    fiat_currency = models.CharField(max_length=10)
+    period_minutes = models.IntegerField(default=10)  # періодичність у хвилинах
+    last_checked = models.DateTimeField(null=True, blank=True)
+    last_price = models.FloatField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user} → {self.currency.symbol} ({self.fiat_currency})"
+
+
+class UserNotification(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}<title>Успішно</title>{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="alert alert-success text-center shadow p-4 rounded" role="alert">
+    <h2 class="mb-4">✅ Сповіщення створено успішно!</h2>
+    <p class="lead">Ми повідомимо вас, щойно ціна зміниться відповідно до ваших налаштувань.</p>
+    <a href="{% url 'create_price_watch' %}" class="btn btn-outline-success mt-3">Додати ще одне</a>
+    <a href="{% url 'index' %}" class="btn btn-link mt-3">Повернутися на головну</a>
+  </div>
+</div>
+{% endblock %}
