@@ -2,62 +2,125 @@
 
 {% block content %}
   <style>
-    .form-container {
-      background-color: #1a1a1a;
-      padding: 2rem;
-      border-radius: 1rem;
-      width: 100%;
-      max-width: 500px;
-      margin: 0 auto;
+    /* Загальні стилі */
+    body {
+      background: linear-gradient(135deg, #6a82fb, #fc5c7d); /* Градієнт для фону */
+      font-family: 'Arial', sans-serif;
       color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Контейнер для форми */
+    .form-container {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 3rem;
+      border-radius: 1.5rem;
+      width: 100%;
+      max-width: 550px;
+      margin: 50px auto;
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      animation: fadeIn 1s ease-out;
+    }
+
+    /* Заголовок */
+    h2 {
+      font-size: 2.8rem;
+      color: #ff4d4d;
+      margin-bottom: 2rem;
+      animation: fadeIn 1s ease-out;
     }
 
     label {
       font-weight: bold;
+      margin-bottom: 0.5rem;
       display: block;
-      margin-bottom: 0.2rem;
+      font-size: 1.1rem;
     }
 
     input, select {
       width: 100%;
-      padding: 0.5rem;
-      margin-bottom: 1rem;
+      padding: 12px;
+      margin-bottom: 1.5rem;
       border: none;
-      border-radius: 0.5rem;
+      border-radius: 1rem;
       background-color: #333;
       color: #fff;
-    }
-
-    button {
-      background-color: #d32f2f;
-      color: white;
-      padding: 0.5rem 1rem;
       font-size: 1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    input:focus, select:focus {
+      background-color: #444;
+      outline: none;
+    }
+
+    /* Кнопки */
+    button {
+      background-color: #6a82fb;
+      color: white;
+      padding: 12px 30px;
+      font-size: 1.1rem;
       border: none;
-      border-radius: 0.5rem;
+      border-radius: 1rem;
       cursor: pointer;
-      margin: 0.2rem;
+      transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
+    button:hover {
+      background-color: #4e6af1;
+      transform: scale(1.05);
+    }
+
+    button:active {
+      background-color: #1f3d8d;
+    }
+
+    /* Результат */
     .result-box {
-      margin-top: 1.5rem;
+      margin-top: 2rem;
       background-color: #222;
-      padding: 1rem;
-      border-radius: 0.5rem;
+      padding: 1.5rem;
+      border-radius: 1rem;
       font-size: 1.5rem;
-      text-align: center;
       color: #00e676;
+      animation: fadeIn 1s ease-out;
     }
 
+    /* Помилки */
     .error-msg {
       margin-top: 1rem;
       color: #ff5252;
-      text-align: center;
+      font-size: 1.2rem;
+      animation: fadeIn 1s ease-out;
+    }
+
+    /* Кнопка зміни напрямку */
+    .reverse-btn {
+      background-color: transparent;
+      color: #fff;
+      border: 2px solid #ff4d4d;
+      margin-top: 15px;
+      padding: 10px 25px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .reverse-btn:hover {
+      background-color: #ff4d4d;
+    }
+
+    /* Анімація появи */
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
     }
   </style>
 
   <div class="form-container">
-    <h2 style="text-align:center;">💱 Конвертер криптовалют</h2>
+    <h2>💱 Конвертер криптовалют</h2>
     <form method="post" id="convert-form">
       {% csrf_token %}
       <label for="id_currency">Криптовалюта:</label>
@@ -71,9 +134,9 @@
 
       <input type="hidden" name="reverse" id="reverse" value="false" />
 
-      <div style="text-align: center;">
+      <div>
         <button type="submit">🔁 Конвертувати</button>
-        <button type="button" onclick="toggleReverse()">🔄 Змінити напрямок</button>
+        <button type="button" class="reverse-btn" onclick="toggleReverse()">🔄 Змінити напрямок</button>
       </div>
     </form>
 

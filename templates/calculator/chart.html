@@ -1,11 +1,128 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
+  <style>
+    /* Загальні стилі */
+    body {
+      background: linear-gradient(135deg, #6a82fb, #fc5c7d); /* Градієнтний фон */
+      font-family: 'Arial', sans-serif;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Контейнер для форми */
+    .form-container {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 3rem;
+      border-radius: 1.5rem;
+      width: 100%;
+      max-width: 600px;
+      margin: 50px auto;
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      animation: fadeIn 1s ease-out;
+    }
+
+    h2 {
+      font-size: 2.8rem;
+      color: #ff4d4d;
+      margin-bottom: 2rem;
+      animation: fadeIn 1s ease-out;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      display: block;
+      font-size: 1.1rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 1.5rem;
+      border: none;
+      border-radius: 1rem;
+      background-color: #333;
+      color: #fff;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    input:focus, select:focus {
+      background-color: #444;
+      outline: none;
+    }
+
+    /* Кнопки */
+    button {
+      background-color: #6a82fb;
+      color: white;
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #4e6af1;
+      transform: scale(1.05);
+    }
+
+    button:active {
+      background-color: #1f3d8d;
+    }
+
+    /* Результат */
+    .result-box {
+      margin-top: 2rem;
+      background-color: #222;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      font-size: 1.5rem;
+      color: #00e676;
+      animation: fadeIn 1s ease-out;
+    }
+
+    /* Помилки */
+    .error-msg {
+      margin-top: 1rem;
+      color: #ff5252;
+      font-size: 1.2rem;
+      animation: fadeIn 1s ease-out;
+    }
+
+    /* Кнопка зміни напрямку */
+    .reverse-btn {
+      background-color: transparent;
+      color: #fff;
+      border: 2px solid #ff4d4d;
+      margin-top: 15px;
+      padding: 10px 25px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .reverse-btn:hover {
+      background-color: #ff4d4d;
+    }
+
+    /* Анімація */
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+  </style>
+
   <div class="form-container">
-    <h2 style="text-align:center;">📊 Графік курсу криптовалюти</h2>
+    <h2>📊 Графік курсу криптовалюти</h2>
     <form method="post">
       {% csrf_token %}
-      <label>Оберіть криптовалюту:</label>
+      <label for="id_currency">Оберіть криптовалюту:</label>
       <select name="currency" class="form-control">
         {% for currency in currencies %}
           <option value="{{ currency.id }}" {% if selected_currency and currency.id == selected_currency.id %}selected{% endif %}>
@@ -14,14 +131,14 @@
         {% endfor %}
       </select>
 
-      <label>Фіатна валюта:</label>
+      <label for="id_fiat_currency">Фіатна валюта:</label>
       <select name="fiat" class="form-control">
         {% for f in fiat_currencies %}
           <option value="{{ f }}" {% if f == selected_fiat %}selected{% endif %}>{{ f }}</option>
         {% endfor %}
       </select>
 
-      <label>Період (у днях):</label>
+      <label for="id_days">Період (у днях):</label>
       <select name="days" class="form-control">
         {% for d in periods %}
           <option value="{{ d }}" {% if selected_days == d|stringformat:"s" %}selected{% endif %}>{{ d }} днів</option>
@@ -32,7 +149,9 @@
     </form>
 
     {% if chart_data %}
-      <canvas id="priceChart" width="400" height="200"></canvas>
+      <div class="chart-container">
+        <canvas id="priceChart" width="400" height="200"></canvas>
+      </div>
       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       <script>
         const ctx = document.getElementById('priceChart').getContext('2d');
@@ -68,6 +187,12 @@
           }
         });
       </script>
+    {% endif %}
+
+    {% if error %}
+      <div class="error-msg">
+        ⚠️ {{ error }}
+      </div>
     {% endif %}
   </div>
 {% endblock %}

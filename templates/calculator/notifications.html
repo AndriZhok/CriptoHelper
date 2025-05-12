@@ -2,116 +2,268 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container mt-5">
-  <div class="card shadow-lg">
-    <div class="card-header bg-danger text-white">
-      <h4 class="mb-0">🔔 Ваші сповіщення</h4>
-      <form method="post" action="{% url 'create_price_watch' %}" class="mt-3">
-        {% csrf_token %}
-        <div class="form-row align-items-end">
-          <div class="col-md-4">
-            <label for="currencySelect">Криптовалюта</label>
-            <select id="currencySelect" name="currency" class="form-control" required>
-              <option value="" disabled selected>-- Оберіть валюту --</option>
-              {% for currency in currencies %}
-                <option value="{{ currency.id }}">{{ currency.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="col-md-4">
-            <label for="fiatCurrency">Фіат</label>
-            <select id="fiatCurrency" name="fiat_currency" class="form-control">
-              <option value="USD">USD</option>
-              <option value="UAH">UAH</option>
-              <option value="EUR">EUR</option>
-              <option value="GBP">GBP</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <label for="period">Періодичність (хв)</label>
-            <input type="number" id="period" name="period_minutes" class="form-control" min="1" value="10">
-          </div>
-          <div class="col-md-1">
-            <button type="submit" class="btn btn-danger">➕</button>
-          </div>
-        </div>
-      </form>
-    </div>
-    <div class="card-body bg-dark text-white">
-      <ul class="list-group list-group-flush" id="notificationList">
-        {% for n in notifications %}
-          <li class="list-group-item bg-dark text-white border-secondary">
-            <strong>{{ n.created_at|date:"d.m.Y H:i" }}</strong> – {{ n.message }}
-          </li>
-        {% empty %}
-          <div class="alert alert-secondary text-center" role="alert">
-            Сповіщень поки немає.
-          </div>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
-  <hr class="bg-light my-4">
-  <h5 class="text-white">📋 Активні підписки</h5>
-  <table class="table table-dark table-striped table-bordered">
-    <thead>
-      <tr>
-        <th>Криптовалюта</th>
-        <th>Фіат</th>
-        <th>Періодичність</th>
-        <th>Остання ціна</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for watch in price_watches %}
-        <tr>
-          <td>{{ watch.currency.symbol }}</td>
-          <td>{{ watch.fiat_currency }}</td>
-          <td>{{ watch.period_minutes }} хв</td>
-          <td>{% if watch.last_price %}{{ watch.last_price|floatformat:2 }}{% else %}–{% endif %}</td>
-          <td>
-            <form method="post" action="{% url 'delete_price_watch' watch.id %}">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-sm btn-outline-danger">Видалити</button>
-            </form>
-          </td>
-        </tr>
-      {% empty %}
-        <tr>
-          <td colspan="5" class="text-center text-secondary">Підписок ще немає.</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
-
-<script>
-  async function fetchNotifications() {
-    try {
-      const res = await fetch("{% url 'api_notifications' %}");
-      if (!res.ok) return;
-      const data = await res.json();
-      const list = document.getElementById("notificationList");
-      list.innerHTML = "";
-
-      if (data.notifications.length === 0) {
-        list.innerHTML = '<div class="alert alert-secondary text-center">Сповіщень поки немає.</div>';
-        return;
-      }
-
-      for (const n of data.notifications) {
-        const li = document.createElement("li");
-        li.className = "list-group-item bg-dark text-white border-secondary";
-        li.innerHTML = `<strong>${n.created_at}</strong> – ${n.message}`;
-        list.appendChild(li);
-      }
-    } catch (e) {
-      console.error("Не вдалося оновити сповіщення", e);
+  <style>
+    /* Загальні стилі */
+    body {
+      background: linear-gradient(135deg, #6a82fb, #fc5c7d); /* Градієнт для фону */
+      font-family: 'Arial', sans-serif;
+      color: #fff;
+      margin: 0;
+      padding: 0;
     }
-  }
 
-  fetchNotifications();
-  setInterval(fetchNotifications, 10000); // кожні 10 секунд
-</script>
+    .container {
+      margin-top: 50px;
+    }
+
+    .card {
+      background-color: #6a82fb;
+      border-radius: 1rem;
+      box-shadow: 0 4px 20px #fc5c7d;
+    }
+
+    .card-header {
+      background-color: #fc5c7d;
+      color: white;
+      text-align: center;
+      font-size: 1.8rem;
+      padding: 15px;
+    }
+
+    .card-body {
+      background-color: #222;
+      color: white;
+    }
+
+    .btn-danger {
+      background-color: #6a82fb;
+      color: white;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-danger:hover {
+      background-color: #ff5252;
+      transform: scale(1.05);
+    }
+
+    .btn-outline-danger {
+      border: 2px solid #6a82fb;
+      color: #d32f2f;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-outline-danger:hover {
+      background-color: #6a82fb;
+      color: white;
+    }
+
+    .list-group-item {
+      background-color: #ff5252;
+      color: #fff;
+      border: none;
+      border-bottom: 1px solid #444;
+    }
+
+    .alert {
+      margin-top: 10px;
+      background-color: #333;
+      color: #fff;
+      border-radius: 0.75rem;
+    }
+
+    .alert-secondary {
+      background-color: #ff5252;
+    }
+
+    .form-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .form-row .col-md-4,
+    .form-row .col-md-3,
+    .form-row .col-md-1 {
+      width: 23%;
+    }
+
+    select,
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 0.75rem;
+      border: none;
+      background-color: #333;
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    select:focus,
+    input:focus {
+      outline: none;
+      background-color: #ff5252;
+    }
+
+    .form-row button {
+      padding: 0.5rem 1rem;
+      background-color: #ff5252;
+      color: white;
+      border: none;
+      border-radius: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .form-row button:hover {
+      background-color: #ff5252;
+    }
+
+    .table th, .table td {
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .table {
+      background-color: #333;
+      border-radius: 1rem;
+      margin-top: 30px;
+    }
+
+    .table-dark th, .table-dark td {
+      color: #fff;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+      background-color: #ff5252;
+    }
+
+  </style>
+
+  <div class="container">
+    <!-- Сповіщення -->
+    <div class="card shadow-lg">
+      <div class="card-header">
+        🔔 Ваші сповіщення
+      </div>
+      <div class="card-body">
+        <form method="post" action="{% url 'create_price_watch' %}">
+          {% csrf_token %}
+          <div class="form-row align-items-end">
+            <div class="col-md-4">
+              <label for="currencySelect">Криптовалюта</label>
+              <select id="currencySelect" name="currency" class="form-control" required>
+                <option value="" disabled selected>-- Оберіть валюту --</option>
+                {% for currency in currencies %}
+                  <option value="{{ currency.id }}" {% if selected_currency and currency.id == selected_currency.id %}selected{% endif %}>
+                    {{ currency.name }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="fiatCurrency">Фіат</label>
+              <select id="fiatCurrency" name="fiat_currency" class="form-control">
+                <option value="USD">USD</option>
+                <option value="UAH">UAH</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="period">Періодичність (хв)</label>
+              <input type="number" id="period" name="period_minutes" class="form-control" min="1" value="10">
+            </div>
+            <div class="col-md-1">
+              <button type="submit" class="btn btn-danger">➕</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="card-body bg-dark text-white">
+        <ul class="list-group list-group-flush" id="notificationList">
+          {% for n in notifications %}
+            <li class="list-group-item">
+              <strong>{{ n.created_at|date:"d.m.Y H:i" }}</strong> – {{ n.message }}
+            </li>
+          {% empty %}
+            <div class="alert alert-secondary text-center" role="alert">
+              Сповіщень поки немає.
+            </div>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <!-- Активні підписки -->
+    <hr class="bg-light my-4">
+    <h5 class="text-white">📋 Активні підписки</h5>
+    <table class="table table-dark table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Криптовалюта</th>
+          <th>Фіат</th>
+          <th>Періодичність</th>
+          <th>Остання ціна</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for watch in price_watches %}
+          <tr>
+            <td>{{ watch.currency.symbol }}</td>
+            <td>{{ watch.fiat_currency }}</td>
+            <td>{{ watch.period_minutes }} хв</td>
+            <td>{% if watch.last_price %}{{ watch.last_price|floatformat:2 }}{% else %}–{% endif %}</td>
+            <td>
+              <form method="post" action="{% url 'delete_price_watch' watch.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger">Видалити</button>
+              </form>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5" class="text-center text-secondary">Підписок ще немає.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    async function fetchNotifications() {
+      try {
+        const res = await fetch("{% url 'api_notifications' %}");
+        if (!res.ok) return;
+        const data = await res.json();
+        const list = document.getElementById("notificationList");
+        list.innerHTML = "";
+
+        if (data.notifications.length === 0) {
+          list.innerHTML = '<div class="alert alert-secondary text-center">Сповіщень поки немає.</div>';
+          return;
+        }
+
+        for (const n of data.notifications) {
+          const li = document.createElement("li");
+          li.className = "list-group-item";
+          li.innerHTML = `<strong>${n.created_at}</strong> – ${n.message}`;
+          list.appendChild(li);
+        }
+      } catch (e) {
+        console.error("Не вдалося оновити сповіщення", e);
+      }
+    }
+
+    fetchNotifications();
+    setInterval(fetchNotifications, 10000); // кожні 10 секунд
+  </script>
 {% endblock %}

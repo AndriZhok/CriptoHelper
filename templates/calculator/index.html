@@ -1,3 +1,175 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% block title %}<title>CryptoCalc — Головна сторінка</title>{% endblock %}
 
-cool
+{% block content %}
+  <style>
+    /* Основні стилі */
+    body {
+      background-color: #111;
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden;
+    }
+
+    .hero-section {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(45deg, #4e73df, #1c3d84);
+      color: white;
+      animation: fadeIn 1s ease-out;
+    }
+
+    .hero-section h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      animation: slideUp 1s ease-out;
+    }
+
+    .hero-section p {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeInText 2s forwards 1s;
+    }
+
+    .btn-main {
+      padding: 12px 30px;
+      background-color: #d32f2f;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-main:hover {
+      background-color: #ff5252;
+    }
+
+    .features-section {
+      padding: 50px 20px;
+      background-color: #222;
+      animation: fadeIn 1.5s ease-out;
+    }
+
+    .features-section h2 {
+      font-size: 2.5rem;
+      color: #ff4d4d;
+      margin-bottom: 30px;
+    }
+
+    .features {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .feature-card {
+      background-color: #333;
+      padding: 20px;
+      border-radius: 15px;
+      width: 250px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .feature-card i {
+      font-size: 3rem;
+      color: #ff4d4d;
+      margin-bottom: 20px;
+      transition: color 0.3s ease;
+    }
+
+    .feature-card:hover i {
+      color: #d32f2f;
+    }
+
+    .feature-card h5 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .feature-card p {
+      font-size: 1rem;
+      color: #ccc;
+    }
+
+    /* Анімації */
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeInText {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      0% {
+        transform: translateY(100px);
+      }
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+  </style>
+
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <h1>Ласкаво просимо до CryptoCalc!</h1>
+    <p>Легко та швидко конвертуйте криптовалюти у фіатні валюти. Створіть сповіщення для зміни ціни!</p>
+    <a href="{% url 'create_price_watch' %}" class="btn-main">Розпочати</a>
+  </div>
+
+  <!-- Features Section -->
+  <div class="features-section">
+    <h2>Чому CryptoCalc?</h2>
+    <div class="features">
+      <!-- Feature 1 -->
+      <div class="feature-card">
+        <i class="fas fa-exchange-alt"></i>
+        <h5>Швидка конверсія</h5>
+        <p>Просто виберіть криптовалюту та фіат, і отримайте результат миттєво.</p>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="feature-card">
+        <i class="fas fa-bell"></i>
+        <h5>Сповіщення</h5>
+        <p>Отримуйте сповіщення, коли ціна криптовалюти досягне заданого рівня.</p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="feature-card">
+        <i class="fas fa-chart-line"></i>
+        <h5>Графіки курсу</h5>
+        <p>Переглядайте графіки змін ціни криптовалюти за різні періоди часу.</p>
+      </div>
+    </div>
+  </div>
+{% endblock %}

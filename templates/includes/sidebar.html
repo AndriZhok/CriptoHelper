@@ -10,18 +10,41 @@
   <style>
       body {
           background-color: #111;
+          color: white;
+      }
+      .navbar {
+          background-color: #1c1c1c;
       }
       .navbar-nav .nav-link {
           font-size: 1.2em;
-          color: red; /* Задай червоний колір для .nav-link */
+          color: #ff4d4d; /* Червоно-рожевий колір для .nav-link */
+      }
+      .navbar-nav .nav-link:hover {
+          color: #ffcccc; /* Світлий колір при наведенні на посилання */
+      }
+      .navbar-brand {
+          color: #ff4d4d;
+          font-weight: bold;
+      }
+      .navbar-brand:hover {
+          color: #ffcccc; /* Світлий колір при наведенні на логотип */
+      }
+      .navbar-text {
+          color: #ff4d4d;
+      }
+      .btn-link {
+          color: #ff4d4d;
+      }
+      .btn-link:hover {
+          color: #ffcccc; /* Світлий колір при наведенні на кнопку logout */
       }
   </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container">
-    <a class="navbar-brand text-danger" href="#">CryptoCalc</a>
+    <a class="navbar-brand" href="{% url 'index' %}">CryptoCalc</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -30,13 +53,13 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mx-auto">
         <li class="nav-item">
-          <a class="nav-link text-danger" href="{% url 'chart' %}">Graph</a>
+          <a class="nav-link" href="{% url 'chart' %}">Graph</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-danger" href="{% url 'calculator' %}">Calculator</a>
+          <a class="nav-link" href="{% url 'calculator' %}">Calculator</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-danger" href="{% url 'create_price_watch' %}">Alerts</a>
+          <a class="nav-link" href="{% url 'create_price_watch' %}">Alerts</a>
         </li>
       </ul>
 
@@ -54,10 +77,10 @@
           </li>
         {% else %}
           <li class="nav-item">
-            <a class="nav-link font-weight-bold text-danger" href="{% url 'login' %}">Login</a>
+            <a class="nav-link font-weight-bold" href="{% url 'login' %}">Login</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link font-weight-bold text-danger" href="{% url 'register' %}">Register</a>
+            <a class="nav-link font-weight-bold" href="{% url 'register' %}">Register</a>
           </li>
         {% endif %}
       </ul>
@@ -75,10 +98,10 @@
           </li>
         {% else %}
           <li class="nav-item">
-            <a class="nav-link text-danger" href="{% url 'login' %}">Login</a>
+            <a class="nav-link" href="{% url 'login' %}">Login</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link font-weight-bold text-danger" href="{% url 'register' %}">Register</a>
+            <a class="nav-link font-weight-bold" href="{% url 'register' %}">Register</a>
           </li>
         {% endif %}
       </ul>

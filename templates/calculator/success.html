@@ -2,12 +2,100 @@
 {% block title %}<title>Успішно</title>{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-  <div class="alert alert-success text-center shadow p-4 rounded" role="alert">
-    <h2 class="mb-4">✅ Сповіщення створено успішно!</h2>
-    <p class="lead">Ми повідомимо вас, щойно ціна зміниться відповідно до ваших налаштувань.</p>
-    <a href="{% url 'create_price_watch' %}" class="btn btn-outline-success mt-3">Додати ще одне</a>
-    <a href="{% url 'index' %}" class="btn btn-link mt-3">Повернутися на головну</a>
+  <style>
+    /* Загальні стилі */
+    body {
+      background: linear-gradient(45deg, #6a82fb, #fc5c7d); /* Градієнт фону */
+      font-family: 'Arial', sans-serif;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 0;
+      text-align: center;
+    }
+
+    /* Стиль для alert-success */
+    .alert-success {
+      background: linear-gradient(45deg, #4f8ef7, #2a56c6); /* Градієнт для alert */
+      color: white;
+      border-radius: 1.5rem;
+      box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2);
+      padding: 40px 30px;
+      animation: fadeInUp 1s ease-out;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    .alert-success h2 {
+      font-size: 2.8rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    .alert-success p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Кнопки */
+    .alert-success .btn {
+      font-size: 1.1rem;
+      padding: 12px 30px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .alert-success .btn-outline-success {
+      background-color: #fff;
+      color: #4f8ef7;
+      border: 2px solid #4f8ef7;
+    }
+
+    .alert-success .btn-outline-success:hover {
+      background-color: #4f8ef7;
+      color: white;
+      transform: scale(1.05);
+    }
+
+    .alert-success .btn-link {
+      color: #4f8ef7;
+      font-weight: bold;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .alert-success .btn-link:hover {
+      color: #2a56c6;
+    }
+
+    /* Анімації */
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+
+  <div class="container">
+    <div class="alert alert-success text-center shadow p-4 rounded" role="alert">
+      <h2 class="mb-4">✅ Сповіщення створено успішно!</h2>
+      <p class="lead">Ми повідомимо вас, щойно ціна зміниться відповідно до ваших налаштувань.</p>
+      <a href="{% url 'create_price_watch' %}" class="btn btn-outline-success mt-3">Додати ще одне</a>
+      <a href="{% url 'index' %}" class="btn btn-link mt-3">Повернутися на головну</a>
+    </div>
   </div>
-</div>
 {% endblock %}
